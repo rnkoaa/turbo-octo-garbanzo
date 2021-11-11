@@ -35,6 +35,7 @@ class ProductTest {
     void productCanBeCreatedAndUpdated() {
         var product = new Product(UUID.randomUUID(), "My Product", new ProductVariant(UUID.randomUUID(), "Variant 1"));
         var response = productClient.create(product).block();
+        assertThat(response).isNotNull();
         assertThat(response.code()).isEqualTo(HttpStatus.CREATED.getCode());
         assertThat(response.body()).isEqualTo(product);
 
@@ -49,6 +50,7 @@ class ProductTest {
     void productCanBeCreated() {
         var product = new Product(UUID.randomUUID(), "My Product", new ProductVariant(UUID.randomUUID(), "Variant 1"));
         var response = productClient.create(product).block();
+        assertThat(response).isNotNull();
         assertThat(response.code()).isEqualTo(HttpStatus.CREATED.getCode());
         assertThat(response.body()).isEqualTo(product);
         assertThat(response.getHeaders().contains("location")).isTrue();
@@ -63,7 +65,7 @@ class ProductTest {
     void retrieveSingleProduct() {
         List<Product> products = productClient.getAll().block();
         assertThat(products).hasSize(6);
-
+        assertThat(products).isNotNull();
         var product = products.get(0);
         Product retrievedProduct = productClient.getProduct(product.id()).block();
         assertThat(retrievedProduct).isNotNull();
