@@ -22,7 +22,7 @@ public interface ProductApi {
     Mono<Product> updateProduct(UUID id, @Body Product product);
 
     @Delete
-    Mono<?> resetInventory() ;
+    Mono<HttpResponse<?>> resetInventory() ;
 
     @Get("/{id}")
     Mono<Product> getProduct(UUID id) ;

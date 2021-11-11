@@ -13,10 +13,12 @@ public class ProductController implements ProductApi {
 
     private final Products products = Products.getInstance();
 
+    @Override
     public Mono<List<Product>> getProducts() {
         return Mono.just(products.getAll());
     }
 
+    @Override
     public Mono<HttpResponse<Product>> create(@Body Product product) {
         var existing = products.get(product.id());
         if (existing != null) {
@@ -26,6 +28,7 @@ public class ProductController implements ProductApi {
         return Mono.just(HttpResponse.created(product, location(product.id())));
     }
 
+    @Override
     public Mono<Product> updateProduct(UUID id, @Body Product product) {
         var existing = products.get(product.id());
         if (existing == null) {
@@ -35,11 +38,13 @@ public class ProductController implements ProductApi {
         return Mono.just(product);
     }
 
-    public Mono<?> resetInventory() {
+    @Override
+    public Mono<HttpResponse<?>> resetInventory() {
         products.reset();
-        return Mono.empty();
+        return Mono.just(HttpResponse.noContent());
     }
 
+    @Override
     public Mono<Product> getProduct(UUID id) {
         return Mono.just(products.get(id));
     }

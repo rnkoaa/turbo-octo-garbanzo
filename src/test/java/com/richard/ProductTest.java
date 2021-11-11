@@ -3,6 +3,7 @@ package com.richard;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
+import io.micronaut.http.HttpResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -21,14 +22,14 @@ class ProductTest {
     private ProductClient productClient;
 
     @Test
-    void productCanBeRetrieved(){
-        List<Product> products = productClient.getAll().block();
+    void productCanBeRetrieved() {
+        List<Product> products = productClient.getProducts().block();
         assertThat(products).hasSize(6);
     }
 
     @AfterEach
-    void resetInventory(){
-        productClient.resetInventory().block();
+    void resetInventory() {
+         productClient.resetInventory().block();
     }
 
     @Test
@@ -63,7 +64,7 @@ class ProductTest {
 
     @Test
     void retrieveSingleProduct() {
-        List<Product> products = productClient.getAll().block();
+        List<Product> products = productClient.getProducts().block();
         assertThat(products).hasSize(6);
         assertThat(products).isNotNull();
         var product = products.get(0);
