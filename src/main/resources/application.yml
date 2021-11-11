@@ -1,3 +1,19 @@
 micronaut:
   application:
     name: product
+
+# enable endpoints
+# GET /beans – returns information about the loaded bean definitions
+# GET /info – returns static information from the state of the application
+# GET /health – exposes “healthcheck”
+# POST /refresh – it is refresh the application state, all the beans annotated with @Refreshable will be reloaded
+# GET /routes – returns information about URIs exposed by the application
+# GET /logger – returns information about the available loggers
+# GET /caches – returns information about the caches
+# POST /stop – it shuts down the application server
+endpoints:
+  all:
+    enabled: true
+    sensitive: false
+  stop:
+    enabled: false
