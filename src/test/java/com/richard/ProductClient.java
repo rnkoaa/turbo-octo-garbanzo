@@ -13,7 +13,7 @@ import io.micronaut.http.annotation.Put;
 import io.micronaut.http.client.annotation.Client;
 import reactor.core.publisher.Mono;
 
-@Client("/product")
+//@Client("/product")
 public interface ProductClient extends ProductApi{
 //
 //    @Get

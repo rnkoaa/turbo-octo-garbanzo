@@ -1,4 +1,5 @@
 plugins {
+    id('idea')
     id("com.github.johnrengelman.shadow") version "7.1.0"
     id("io.micronaut.application") version "2.0.8"
 }
@@ -8,6 +9,41 @@ group = "com.richard"
 
 repositories {
     mavenCentral()
+}
+
+sourceSets {
+
+    intTest {
+        java.srcDir "$projectDir/src/intTest/groovy"
+
+        resources {
+            srcDirs += "$projectDir/src/intTest/resources"
+        }
+//        resources.srcDir "$projectDir/src/intTest/resources"
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.output + test.output
+    }
+}
+
+idea {
+    module {
+        testSourceDirs += sourceSets.intTest.java.srcDirs
+        testResourceDirs += sourceSets.intTest.resources.srcDirs
+    }
+}
+
+configurations {
+    intTestImplementation {
+        extendsFrom testImplementation
+    }
+    intTestRuntime {
+        extendsFrom testRuntimeClasspath
+    }
+
+    intTestAnnotationProcessor {
+        extendsFrom(annotationProcessor)
+    }
+
 }
 
 micronaut {
@@ -20,7 +56,7 @@ micronaut {
 }
 
 dependencies {
-	annotationProcessor("io.micronaut:micronaut-http-validation")
+    annotationProcessor("io.micronaut:micronaut-http-validation")
     annotationProcessor("io.micronaut.openapi:micronaut-openapi")
     implementation("io.micronaut:micronaut-http-client")
     implementation("io.micronaut:micronaut-management")
@@ -33,14 +69,29 @@ dependencies {
     runtimeOnly("org.apache.logging.log4j:log4j-api:2.14.1")
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1")
     testImplementation("org.assertj:assertj-core")
+
     implementation("io.micronaut:micronaut-validation")
+
+    intTestImplementation("org.assertj:assertj-core")
+    intTestImplementation("org.junit.jupiter:junit-jupiter-api")
+    intTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs = [
+            "--enable-preview",
+            '-Amicronaut.processing.incremental=true',
+            '-Amicronaut.processing.annotations=com.richard.*',
+    ]
+    options.fork = true
+    options.forkOptions.jvmArgs << '-Dmicronaut.openapi.views.spec=rapidoc.enabled=true,swagger-ui.enabled=true,swagger-ui.theme=flattop'
 }
 
 test {
     useJUnitPlatform()
     testLogging {
-       events "passed", "skipped", "failed"
-   }
+        events "passed", "skipped", "failed"
+    }
 }
 
 application {
@@ -49,6 +100,34 @@ application {
 java {
     sourceCompatibility = JavaVersion.toVersion("17")
     targetCompatibility = JavaVersion.toVersion("17")
+}
+
+
+tasks.withType(Test) {
+    jvmArgs += "--enable-preview"
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs += "--enable-preview"
+}
+
+task intTest(type: Test) {
+    description = 'Runs the functional tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.intTest.output.classesDirs
+    classpath = sourceSets.intTest.runtimeClasspath
+    outputs.upToDateWhen { false }
+    mustRunAfter test
+}
+
+intTest {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+
+//    maxParallelForks = (int) (Runtime.runtime.availableProcessors() / 2 + 1)
+    reports.junitXml.required = false
 }
 
 
