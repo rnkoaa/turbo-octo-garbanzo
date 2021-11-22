@@ -5,7 +5,7 @@ plugins {
 }
 
 version = "0.1"
-group = "com.richard"
+group = "com.excalibur"
 
 repositories {
     mavenCentral()
@@ -55,7 +55,55 @@ micronaut {
     }
 }
 
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    tasks.withType(JavaCompile) {
+//        options.fork = true
+        options.compilerArgs += "--enable-preview"
+    }
+    tasks.withType(Test) {
+        jvmArgs += "--enable-preview"
+        reports.html.required = true
+        reports.junitXml.required = false
+    }
+
+    tasks.withType(JavaExec) {
+        jvmArgs += "--enable-preview"
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
 dependencies {
+    annotationProcessor(project(":libs:annotation-processor"))
+
+    implementation(project(":libs:annotations"))
+    implementation(project(":libs:event-common"))
+
+    annotationProcessor("org.immutables:value:${immutablesVersion}")
+    implementation("org.immutables:value:${immutablesVersion}")
+
     annotationProcessor("io.micronaut:micronaut-http-validation")
     annotationProcessor("io.micronaut.openapi:micronaut-openapi")
     implementation("io.micronaut:micronaut-http-client")

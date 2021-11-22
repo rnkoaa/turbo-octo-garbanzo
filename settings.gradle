@@ -1,2 +1,10 @@
 
 rootProject.name="product"
+include 'libs:annotations'
+include 'libs:annotation-processor'
+include 'libs:event-common'
+
+//findProject(':libs:annotations')?.name = 'annotations'
+//findProject(':libs:annotation-processor')?.name = 'annotation-processor'
+//findProject(':libs:event-common')?.name = 'event-common'
+

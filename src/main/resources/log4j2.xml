@@ -6,7 +6,7 @@
     </Console>
   </Appenders>
   <Loggers>
-    <Logger name="com.richard" level="debug" additivity="false">
+    <Logger name="com.excalibur" level="debug" additivity="false">
       <AppenderRef ref="LogToConsole"/>
     </Logger>
     <Logger name="io.micronaut.http.client" level="info" additivity="false">
