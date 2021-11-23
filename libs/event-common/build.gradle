@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation(project(":libs:annotations"))
+    annotationProcessor(project(":libs:annotation-processor"))
 //    implementation("io.vavr:vavr:0.10.4")
 //    implementation("io.projectreactor:reactor-core:3.4.12")
 
@@ -23,6 +24,7 @@ dependencies {
     implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
 
+    testAnnotationProcessor(project(":libs:annotation-processor"))
     testAnnotationProcessor("org.immutables:value:${immutablesVersion}")
     testImplementation("org.immutables:value:${immutablesVersion}")
     testImplementation("org.assertj:assertj-core:${assertjVersion}")

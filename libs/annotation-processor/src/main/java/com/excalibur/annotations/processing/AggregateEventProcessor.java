@@ -47,14 +47,13 @@ public class AggregateEventProcessor extends AbstractAnnotationProcessor {
         note("found %d events to process", elementsAnnotatedWith.size());
         if (aggregateEvents.size() > 0) {
             try {
-                aggregateEvents.generateCode(processingEnv.getTypeUtils(), processingEnv.getFiler());
+                aggregateEvents.writeIndexFile(processingEnv.getFiler(), "com.excalibur.AggregateEventReference");
+                aggregateEvents.clear();
             } catch (IOException e) {
-                e.printStackTrace();
+                error("error while writing index file with message " + e.getMessage());
+                return true;
             }
         }
-
-        aggregateEvents.clear();
-
         return false;
     }
 

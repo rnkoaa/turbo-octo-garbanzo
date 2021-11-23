@@ -36,7 +36,6 @@ public class EventMessageDeserializer extends JsonDeserializer<EventMessage> {
         }
 
         String typeValue = type.textValue();
-
         Optional<Class<? extends Event>> maybeClzz = eventClassCache.get(typeValue);
         Class<? extends Event> clzz = maybeClzz.orElseThrow(() -> new AggregateEventClassNotFoundException(typeValue));
 

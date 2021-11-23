@@ -3,6 +3,7 @@ package com.excalibur.annotations.model;
 import static com.excalibur.annotations.model.JavaPoet.classOfAny;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
+import com.excalibur.annotations.AnnotationUtils;
 import com.excalibur.event.annotations.AggregateEvent;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
@@ -15,6 +16,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
@@ -49,6 +52,20 @@ public class AggregateEventGroupedClasses {
 
     public void clear() {
         itemsMap.clear();
+    }
+
+    public void writeIndexFile(Filer filer, String fileName) throws IOException {
+        Set<String> lines = itemsMap.entrySet()
+            .stream()
+            .map(entry -> {
+                TypeElement element = entry.getValue().getElement();
+                String elementName = element.asType().toString();
+                return "%s,%s".formatted(entry.getKey(), elementName);
+            })
+            .collect(Collectors.toSet());
+
+        AnnotationUtils.writeSimpleNameIndexFile(filer, lines, AnnotationUtils.ANNOTATED_INDEX_PREFIX + fileName);
+
     }
 
     public void generateCode(Types typeUtils, Filer filer) throws IllegalArgumentException, IOException {

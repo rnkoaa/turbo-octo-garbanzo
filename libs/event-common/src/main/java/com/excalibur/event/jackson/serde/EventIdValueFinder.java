@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public class EventIdValueFinder {
 
-    public Optional<String> findEventId(Class<?> clzz, Class<? extends Annotation> annotatedClass) {
+    public static Optional<String> findEventId(Class<?> clzz, Class<? extends Annotation> annotatedClass) {
         if (clzz.isAnnotationPresent(annotatedClass)) {
             return Optional.of(clzz.getSimpleName());
         }
@@ -19,7 +19,7 @@ public class EventIdValueFinder {
 
     }
 
-    public Optional<Class<?>> findAnnotatedInterface(Class<?> clzz, Class<? extends Annotation> annotatedClass) {
+    public static Optional<Class<?>> findAnnotatedInterface(Class<?> clzz, Class<? extends Annotation> annotatedClass) {
         Class<?>[] interfaces = clzz.getInterfaces();
         Optional<Class<?>> first = findInterfacesWithAnnotation(Arrays.asList(interfaces), annotatedClass);
         if (first.isPresent()) {
@@ -34,14 +34,14 @@ public class EventIdValueFinder {
 
     }
 
-    private Optional<Class<?>> findInterfacesWithAnnotation(List<Class<?>> interfaces,
+    private static Optional<Class<?>> findInterfacesWithAnnotation(List<Class<?>> interfaces,
         Class<? extends Annotation> annotation) {
         return interfaces.stream()
             .filter(it -> it.isAnnotationPresent(annotation))
             .findFirst();
     }
 
-    public Optional<Class<?>> findAnnotatedSuperClass(Class<?> clzz,
+    public  static Optional<Class<?>> findAnnotatedSuperClass(Class<?> clzz,
         Class<? extends Annotation> annotationClass) {
         Class<?> superclass = clzz.getSuperclass();
         if (superclass != null) {
