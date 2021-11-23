@@ -1,5 +1,6 @@
 package com.excalibur.product;
 
+import com.excalibur.product.data.Products;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;

@@ -1,5 +1,6 @@
 package com.excalibur.product;
 
+import com.excalibur.product.data.Products;
 import java.util.UUID;
 
 import io.micronaut.http.annotation.Controller;

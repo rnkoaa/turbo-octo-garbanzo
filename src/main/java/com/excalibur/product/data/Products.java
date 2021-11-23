@@ -1,5 +1,7 @@
-package com.excalibur.product;
+package com.excalibur.product.data;
 
+import com.excalibur.product.Product;
+import com.excalibur.product.ProductVariant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.List;
@@ -8,7 +10,7 @@ import java.util.UUID;
 public class Products {
 
     private static final Map<UUID, Product> products = new LinkedHashMap<>();
-    private static Products instance = new Products();
+    private static final Products instance = new Products();
 
     private static void addProduct(Product product) {
         products.put(product.id(), product);

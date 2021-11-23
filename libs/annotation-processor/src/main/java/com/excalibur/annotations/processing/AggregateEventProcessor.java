@@ -44,7 +44,6 @@ public class AggregateEventProcessor extends AbstractAnnotationProcessor {
                 }
             });
 
-        note("found %d events to process", elementsAnnotatedWith.size());
         if (aggregateEvents.size() > 0) {
             try {
                 aggregateEvents.writeIndexFile(processingEnv.getFiler(), "com.excalibur.AggregateEventReference");

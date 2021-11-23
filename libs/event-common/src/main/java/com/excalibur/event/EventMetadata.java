@@ -17,7 +17,7 @@ public interface EventMetadata {
 
     UUID getId();
 
-//    Optional<String> getSource();
+    Optional<String> getSource();
 
     @Default
     default Instant getTimestamp() {
