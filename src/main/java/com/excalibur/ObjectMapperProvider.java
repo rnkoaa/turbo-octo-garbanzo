@@ -1,5 +1,6 @@
 package com.excalibur;
 
+import com.excalibur.event.jackson.serde.EventMessageModule;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,6 +35,7 @@ public class ObjectMapperProvider {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 //        objectMapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE)
         objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.registerModule(new EventMessageModule());
 
         return objectMapper;
     }
