@@ -51,7 +51,7 @@ micronaut {
     testRuntime("junit5")
     processing {
         incremental(true)
-        annotations("com.richard.*")
+        annotations("com.excalibur.*")
     }
 }
 
@@ -129,7 +129,7 @@ tasks.withType(JavaCompile) {
     options.compilerArgs = [
             "--enable-preview",
             '-Amicronaut.processing.incremental=true',
-            '-Amicronaut.processing.annotations=com.richard.*',
+            '-Amicronaut.processing.annotations=com.excalibur.*',
     ]
     options.fork = true
     options.forkOptions.jvmArgs << '-Dmicronaut.openapi.views.spec=rapidoc.enabled=true,swagger-ui.enabled=true,swagger-ui.theme=flattop'
@@ -143,7 +143,7 @@ test {
 }
 
 application {
-    mainClass.set("com.richard.Application")
+    mainClass.set("com.excalibur.Application")
 }
 java {
     sourceCompatibility = JavaVersion.toVersion("17")
@@ -157,6 +157,14 @@ tasks.withType(Test) {
 
 tasks.withType(JavaExec) {
     jvmArgs += "--enable-preview"
+}
+
+tasks.named("dockerfile") {
+    baseImage = "openjdk:17-slim-bullseye"
+}
+
+tasks.named("dockerBuild") {
+    images = ["rnkoaa/product-app:$project.version"]
 }
 
 task intTest(type: Test) {

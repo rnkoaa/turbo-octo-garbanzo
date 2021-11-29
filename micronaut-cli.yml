@@ -1,5 +1,5 @@
 applicationType: default
-defaultPackage: com.richard
+defaultPackage: com.excalibur
 testFramework: junit
 sourceLanguage: java
 buildTool: gradle

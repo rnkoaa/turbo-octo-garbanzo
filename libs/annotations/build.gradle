@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'com.richard'
+group 'com.excalibur'
 version '0.1'
 
 repositories {
