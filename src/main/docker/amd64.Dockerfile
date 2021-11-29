@@ -1,4 +1,4 @@
-FROM openjdk:18-jdk-alpine3.14 as jre-build
+FROM docker.io/openjdk:18-jdk-alpine3.14 as jre-build
 WORKDIR /home/app
 COPY layers/libs /home/app/libs
 COPY layers/resources /home/app/resources
@@ -27,7 +27,7 @@ RUN jdeps \
     --output jre \
     --add-modules $(cat jre-deps.info)
 #
-FROM alpine:3.14
+FROM docker.io/alpine:3.14
 #
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 ## https://github.com/Docker-Hub-frolvlad/docker-alpine-glibc
