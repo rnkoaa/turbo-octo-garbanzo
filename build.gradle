@@ -3,6 +3,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.0"
     id("io.micronaut.application") version "2.0.8"
 }
+project.gradle.startParameter.excludedTaskNames += ['dockerfile', 'dockerBuild']
 
 version = "0.1"
 group = "com.excalibur"
@@ -19,7 +20,7 @@ sourceSets {
         resources {
             srcDirs += "$projectDir/src/intTest/resources"
         }
-//        resources.srcDir "$projectDir/src/intTest/resources"
+
         compileClasspath += main.output + test.output
         runtimeClasspath += main.output + test.output
     }
@@ -159,14 +160,6 @@ tasks.withType(JavaExec) {
     jvmArgs += "--enable-preview"
 }
 
-tasks.named("dockerfile") {
-    baseImage = "openjdk:17-slim-bullseye"
-}
-
-tasks.named("dockerBuild") {
-    images = ["rnkoaa/product-app:$project.version"]
-}
-
 task intTest(type: Test) {
     description = 'Runs the functional tests.'
     group = 'verification'
@@ -186,5 +179,63 @@ intTest {
     reports.junitXml.required = false
 }
 
+// we will not use this provided micronaut Task
+dockerBuild.enabled = false
+
+dockerfile.enabled = false
+
+task copyDockerFile(type: Copy) {
+    // should always run after buildLayers has been ran
+    dependsOn(buildLayers)
+
+    String prefix = "amd64"
+
+    // what architecture are we running on?
+    def arch = "uname -m".execute().text.trim()
+
+    if (arch == "aarch64" || arch == "arm64v8") {
+        prefix = "arm64"
+    } else if (arch == "x86_64") {
+        prefix = "amd64"
+    }
+
+    // copy and rename docker file for architecture
+    from("${projectDir}/src/main/docker/${prefix}.Dockerfile")
+    into("${buildDir}/docker")
+    rename { String fileName ->
+        fileName.replace("${prefix}.", "")
+    }
+}
+
+task buildDocker(type: Exec) {
+    description = 'Builds a docker image using buildx'
+    group = 'build'
+
+    dependsOn(copyDockerFile)
+
+    String dockerContextLocation = "${buildDir}/docker"
+    String dockerFile = "${dockerContextLocation}/Dockerfile"
+
+    String imageName = ""
+    if (project.hasProperty("dockerImage")) {
+        imageName = "$project.dockerImage"
+    }
+    if (!imageName) {
+        imageName = "$project.group/$project.name:$project.version"
+    }
+
+    if (!imageName.contains(":")) {
+        imageName += ":${project.version}"
+    }
 
 
+    workingDir "${buildDir}/docker"
+    commandLine 'docker', 'buildx', 'build', '--rm', dockerContextLocation, '-t', imageName, "-f", dockerFile
+}
+
+// runs the docker image
+task runDocker(type: Exec) {
+    dependsOn buildDocker
+    workingDir "$projectDir"
+    commandLine 'docker', 'run', "$project.group/$project.name:$project.version"
+}
