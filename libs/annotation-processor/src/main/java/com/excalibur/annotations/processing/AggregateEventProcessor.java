@@ -53,7 +53,7 @@ public class AggregateEventProcessor extends AbstractAnnotationProcessor {
                 return true;
             }
         }
-        return false;
+        return true;
     }
 
     @Override
