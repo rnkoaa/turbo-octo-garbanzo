@@ -1,14 +1,14 @@
 plugins {
     id('idea')
     id("com.github.johnrengelman.shadow") version "7.1.0"
-    id("io.micronaut.application") version "2.0.8"
+    id("io.micronaut.application") version "3.0.0"
 }
-
 
 java {
     sourceCompatibility = JavaVersion.toVersion("17")
     targetCompatibility = JavaVersion.toVersion("17")
 }
+
 project.gradle.startParameter.excludedTaskNames += ['dockerfile', 'dockerBuild']
 
 version = "0.1"
@@ -55,54 +55,15 @@ configurations {
 
 micronaut {
     runtime("netty")
-//    testRuntime("junit5")
+    testRuntime("junit5")
     processing {
         incremental(true)
         annotations("com.excalibur.*")
     }
 }
-//
-//subprojects {
-//    apply plugin: 'java'
-//    apply plugin: 'idea'
-//
-//    java {
-//        sourceCompatibility = JavaVersion.VERSION_17
-//        targetCompatibility = JavaVersion.VERSION_17
-//    }
-//
-//    repositories {
-//        mavenLocal()
-//        mavenCentral()
-//    }
-//
-//    configurations {
-//        compileOnly {
-//            extendsFrom annotationProcessor
-//        }
-//    }
-//
-//    tasks.withType(JavaCompile) {
-////        options.fork = true
-//        options.compilerArgs += "--enable-preview"
-//    }
-//    tasks.withType(Test) {
-//        jvmArgs += "--enable-preview"
-//        reports.html.required = true
-//        reports.junitXml.required = false
-//    }
-//
-//    tasks.withType(JavaExec) {
-//        jvmArgs += "--enable-preview"
-//    }
-//
-//    repositories {
-//        mavenLocal()
-//        mavenCentral()
-//    }
-//}
-//
+
 dependencies {
+    implementation(project(":product-api"))
     annotationProcessor(project(":libs:annotation-processor"))
 
     implementation(project(":libs:annotations"))
@@ -152,14 +113,15 @@ test {
 application {
     mainClass.set("com.excalibur.Application")
 }
+
 java {
     sourceCompatibility = JavaVersion.toVersion("17")
     targetCompatibility = JavaVersion.toVersion("17")
 }
 
-
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
     jvmArgs += "--enable-preview"
+    useJUnitPlatform()    // <-- this line was breaking the build
 }
 
 tasks.withType(JavaExec) {

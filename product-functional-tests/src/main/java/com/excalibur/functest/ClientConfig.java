@@ -24,6 +24,6 @@ public class ClientConfig {
     }
 
     public String getApplicationURL() {
-        return "%s:%d".formatted(server, port);
+        return "http://%s:%d".formatted(server, port);
     }
 }

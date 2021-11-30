@@ -1,36 +1,36 @@
 package com.excalibur
 
+
 import io.micronaut.core.type.Argument
-import io.micronaut.http.client.HttpClient
-import spock.lang.AutoCleanup
-import spock.lang.Shared
+import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
+import io.micronaut.test.extensions.spock.annotation.MicronautTest
 
+@MicronautTest(environments = ["test"], packages = ["com.excalibur.functest"])
 class ProductSpecification extends ApplicationContextSpecification {
-//    @Shared
-//    @AutoCleanup
-//    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer)
-
-    @Shared
-    @AutoCleanup
-    HttpClient httpClient = applicationContext.createBean(HttpClient)
-
 
     def "client is wired"() {
         expect:
         applicationContext != null
-        httpClient != null
     }
 
+
     def "check health of client"() {
+        given:
+        def httpRequest = HttpRequest.GET("/health")
 
-        expect:
-        String appUrl = applicationContext.getRequiredProperty("application.server", String.class)
-        String port = applicationContext.getRequiredProperty("application.port", String.class)
+        when:
+        HttpResponse<String> res = getClient().exchange(httpRequest, Argument.of(String))
 
-        println "http:$appUrl:$port"
+        then:
+        res.status() == HttpStatus.OK
+        assert res.body.isPresent()
 
-        applicationContext != null
-        httpClient != null
+        when:
+        String body = res.body()
 
+        then:
+        assert body == "{\"status\":\"UP\"}"
     }
 }

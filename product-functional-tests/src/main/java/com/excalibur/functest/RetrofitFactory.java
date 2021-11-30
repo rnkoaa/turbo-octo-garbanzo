@@ -1,17 +1,10 @@
 package com.excalibur.functest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.marketplace.client.classifiedad.ClassifiedAdRestService;
-//import com.marketplace.client.userprofile.UserProfileRestService;
-//import com.marketplace.client.config.ClientConfig;
-//import com.marketplace.common.ObjectMapperBuilder;
-//import dagger.Module;
-//import dagger.Provides;
-import java.io.IOException;
-//import javax.inject.Named;
-//import javax.inject.Singleton;
+import com.jakewharton.retrofit2.adapter.reactor.ReactorCallAdapterFactory;
 import io.micronaut.context.annotation.Factory;
 import jakarta.inject.Singleton;
+import java.io.IOException;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -21,31 +14,28 @@ import okio.Buffer;
 import org.jetbrains.annotations.NotNull;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
+
 @Factory
 public class RetrofitFactory {
 
     @Singleton
-    public Retrofit retrofit(){
-        return null;
-    }
-
-    @Singleton
-    static OkHttpClient okHttpClient() {
+    public OkHttpClient okHttpClient() {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(new RequestBodyLoggingInterceptor());
         return httpClient.build();
     }
 
     @Singleton
-    static Retrofit retrofit(ClientConfig config, ObjectMapper objectMapper, OkHttpClient okHttpClient) {
+    public Retrofit retrofit(ClientConfig config, ObjectMapper objectMapper, OkHttpClient okHttpClient) {
         return new Retrofit.Builder()
-                .baseUrl(config.getApplicationURL())
-                .client(okHttpClient)
-                .addConverterFactory(JacksonConverterFactory.create(objectMapper))
-                .build();
+            .baseUrl(config.getApplicationURL())
+            .client(okHttpClient)
+            .addCallAdapterFactory(ReactorCallAdapterFactory.create())
+            .addConverterFactory(JacksonConverterFactory.create(objectMapper))
+            .build();
     }
 
-    static class RequestBodyLoggingInterceptor implements Interceptor {
+    public static class RequestBodyLoggingInterceptor implements Interceptor {
 
         @NotNull
         @Override
@@ -76,15 +66,14 @@ public class RetrofitFactory {
         }
     }
 
-//    @Provides
-//    @Singleton
-//    static UserProfileRestService provideUserProfileRestService(Retrofit retrofit) {
-//        return retrofit.create(UserProfileRestService.class);
-//    }
-//
-//    @Provides
-//    @Singleton
-//    static ClassifiedAdRestService provideClassifiedAdRestService(Retrofit retrofit) {
-//        return retrofit.create(ClassifiedAdRestService.class);
-//    }
+    @Singleton
+    public HealthStatusClient healthStatusClient(Retrofit retrofit) {
+        return retrofit.create(HealthStatusClient.class);
+    }
+
+    @Singleton
+    public ProductClient productClient(Retrofit retrofit) {
+        return retrofit.create(ProductClient.class);
+    }
+
 }

@@ -1,8 +1,10 @@
 package com.excalibur.product.event;
 
 import com.excalibur.event.EventMessage;
+import com.excalibur.product.ProductEventApi;
 import com.excalibur.product.data.ProductEvents;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
 import java.util.List;
 import java.util.UUID;
 import reactor.core.publisher.Mono;
@@ -22,6 +24,7 @@ public class ProductEventController implements ProductEventApi {
     }
 
     @Override
+    @Get
     public Mono<List<EventMessage>> get() {
         return Mono.just(productEvents.getAll());
     }

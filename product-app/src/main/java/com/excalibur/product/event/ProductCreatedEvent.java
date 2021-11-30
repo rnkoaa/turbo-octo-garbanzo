@@ -23,5 +23,5 @@ public interface ProductCreatedEvent extends VersionedEvent {
         return new Builder();
     }
 
-    class Builder extends ProductCreatedEventImpl.Builder {}
+   class Builder extends ProductCreatedEventImpl.Builder {}
 }

@@ -1,4 +1,4 @@
-package com.excalibur.product.event;
+package com.excalibur.product;
 
 import com.excalibur.event.EventMessage;
 import io.micronaut.http.annotation.Get;

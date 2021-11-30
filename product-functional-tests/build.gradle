@@ -14,7 +14,7 @@ repositories {
 
 micronaut {
 //    runtime("netty")
-//    testRuntime("spock2")
+    testRuntime("spock2")
     processing {
         incremental(true)
         annotations("com.excalibur.*")
@@ -22,19 +22,34 @@ micronaut {
 }
 
 dependencies {
-    implementation("io.micronaut:micronaut-inject-groovy")
-    implementation("javax.annotation:javax.annotation-api")
     annotationProcessor("javax.annotation:javax.annotation-api")
+
+    implementation(project(":product-api"))
+
+    annotationProcessor "io.micronaut:micronaut-inject-java"
+
+//    implementation "io.micronaut:micronaut-inject-java"
+    implementation("io.micronaut.reactor:micronaut-reactor")
+
+    implementation("javax.annotation:javax.annotation-api")
 
     implementation('com.squareup.okhttp3:okhttp:4.9.2')
     implementation('com.squareup.retrofit2:retrofit:2.9.0')
     implementation('com.squareup.retrofit2:converter-jackson:2.9.0')
 
+    implementation("com.jakewharton.retrofit:retrofit2-reactor-adapter:2.1.0")
+
+    implementation("org.apache.logging.log4j:log4j-core:2.14.1")
+    runtimeOnly("org.apache.logging.log4j:log4j-api:2.14.1")
+    runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1")
+
     implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}"
 
+//    testImplementation("io.micronaut:micronaut-inject-groovy")
     testImplementation("io.micronaut:micronaut-http-client")
 //    testImplementation("io.micronaut.groovy:micronaut-runtime-groovy")
 //    testCompileOnly("io.micronaut:micronaut-http-validation")
@@ -48,6 +63,13 @@ dependencies {
     }
 //    testImplementation("io.micronaut:micronaut-validation")
 
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs = [
+            '-Amicronaut.processing.incremental=true',
+            '-Amicronaut.processing.annotations=com.excalibur.*',
+    ]
 }
 
 test {

@@ -1,7 +1,10 @@
 package com.excalibur
 
+import com.excalibur.functest.ClientConfig
+import com.excalibur.functest.RetrofitFactory
 import io.micronaut.context.ApplicationContext
 import io.micronaut.http.client.BlockingHttpClient
+import io.micronaut.http.client.HttpClient
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -13,18 +16,15 @@ abstract class ApplicationContextSpecification extends Specification
     @Shared
     ApplicationContext applicationContext = ApplicationContext.run(configuration)
 
-//    @AutoCleanup
-//    @Shared
-//    EmbeddedServer embeddedServer = ApplicationContext.run(EmbeddedServer, configuration)
-//    @AutoCleanup
-//    @Shared
-//    ApplicationContext applicationContext = embeddedServer.applicationContext
-//    @AutoCleanup
-//    @Shared
-//    HttpClient httpClient = applicationContext.createBean(HttpClient, embeddedServer.URL)
     BlockingHttpClient getClient() {
 
-//        httpClient.toBlocking()
+        ClientConfig clientConfig = applicationContext.createBean(ClientConfig)
+
+        URL url = new URL(clientConfig.applicationURL)
+
+        HttpClient httpClient = applicationContext.createBean(HttpClient, url)
+
+        return httpClient.toBlocking()
     }
 //
 //    def cleanup() {
