@@ -9,22 +9,17 @@ import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
 
-abstract class ApplicationContextSpecification extends Specification
-        implements ConfigurationFixture {
+abstract class ApplicationContextSpecification extends Specification implements ConfigurationFixture {
 
     @AutoCleanup
     @Shared
     ApplicationContext applicationContext = ApplicationContext.run(configuration)
 
     BlockingHttpClient getClient() {
-
         ClientConfig clientConfig = applicationContext.createBean(ClientConfig)
-
         URL url = new URL(clientConfig.applicationURL)
 
-        HttpClient httpClient = applicationContext.createBean(HttpClient, url)
-
-        return httpClient.toBlocking()
+        return applicationContext.createBean(HttpClient, url).toBlocking()
     }
 //
 //    def cleanup() {

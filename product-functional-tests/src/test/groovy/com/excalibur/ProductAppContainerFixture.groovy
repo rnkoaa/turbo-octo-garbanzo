@@ -7,7 +7,6 @@ trait ProductAppContainerFixture {
             ProductAppContainer.init()
         }
 
-//        HttpU
         int port = ProductAppContainer.productAppContainer.getMappedPort(8080)
         String containerName = ProductAppContainer.productAppContainer.host
         return [
