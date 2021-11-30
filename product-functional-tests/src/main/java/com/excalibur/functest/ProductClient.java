@@ -5,6 +5,8 @@ import com.excalibur.product.ProductApi;
 import io.micronaut.http.HttpResponse;
 import java.util.List;
 import java.util.UUID;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import reactor.core.publisher.Mono;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -13,25 +15,20 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
-public interface ProductClient extends ProductApi {
+public interface ProductClient {
 
-    @Override
-    @GET("/")
+    @GET("/product")
     Mono<List<Product>> getProducts();
 
-    @Override
-    @POST("/")
-    Mono<HttpResponse<Product>> create(@Body Product product);
+    @POST("/product")
+    Mono<Product> create(@Body Product product);
 
-    @Override
-    @PUT("/{id}")
+    @PUT("/product/{id}")
     Mono<Product> updateProduct(@Path("id") UUID id, @Body Product product);
 
-    @Override
-    @DELETE("/")
-    Mono<HttpResponse<?>> resetInventory();
+    @DELETE("/product")
+    Mono<Void> resetProducts();
 
-    @Override
-    @GET("/{id}")
+    @GET("/product/{id}")
     Mono<Product> getProduct(@Path("id") UUID id);
 }

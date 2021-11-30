@@ -21,7 +21,7 @@ public class RetrofitFactory {
     @Singleton
     public OkHttpClient okHttpClient() {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(new RequestBodyLoggingInterceptor());
+//        httpClient.addInterceptor(new RequestBodyLoggingInterceptor());
         return httpClient.build();
     }
 

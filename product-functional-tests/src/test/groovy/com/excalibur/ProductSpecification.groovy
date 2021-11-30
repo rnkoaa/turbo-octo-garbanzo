@@ -1,36 +1,52 @@
 package com.excalibur
 
-
-import io.micronaut.core.type.Argument
-import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
-import io.micronaut.http.HttpStatus
+import com.excalibur.functest.ProductClient
+import com.excalibur.product.Product
+import com.excalibur.product.ProductVariant
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
+import spock.lang.Shared
 
 @MicronautTest(environments = ["test"], packages = ["com.excalibur.functest"])
 class ProductSpecification extends ApplicationContextSpecification {
 
+    @Shared
+    ProductClient productClient = applicationContext.createBean(ProductClient)
+
     def "client is wired"() {
         expect:
         applicationContext != null
+        productClient != null
+    }
+
+    def cleanup() {
+        productClient.resetProducts().block()
+    }
+
+    def "can create new product"() {
+        given:
+        Product product = new Product(UUID.randomUUID(), "DDD distilled", new ProductVariant(UUID.randomUUID(), "ebook"))
+
+        when:
+        Product response = productClient.create(product).block()
+
+        then:
+        response != null
+        response == product
+
+        when:
+        List<Product> products = productClient.getProducts().block()
+
+        then:
+        products.size() == 7
+
     }
 
 
     def "check health of client"() {
-        given:
-        def httpRequest = HttpRequest.GET("/health")
-
         when:
-        HttpResponse<String> res = getClient().exchange(httpRequest, Argument.of(String))
+        List<Product> res = productClient.getProducts().block()
 
         then:
-        res.status() == HttpStatus.OK
-        assert res.body.isPresent()
-
-        when:
-        String body = res.body()
-
-        then:
-        assert body == "{\"status\":\"UP\"}"
+        res.size() == 6
     }
 }
