@@ -4,6 +4,8 @@ set eux
 
 ./gradlew buildLayers
 
-cp src/main/docker/Dockerfile build/docker
+arch=$(uname -m)
+
+cp src/main/docker/"$arch".Dockerfile build/docker/Dockerfile
 
 docker buildx build build/docker -t rnkoaa/product-app:0.1

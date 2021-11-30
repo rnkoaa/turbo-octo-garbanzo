@@ -192,8 +192,7 @@ task copyDockerFile(type: Copy) {
 
     // what architecture are we running on?
     def arch = "uname -m".execute().text.trim()
-
-    if (arch == "aarch64" || arch == "arm64v8") {
+    if (arch == "aarch64" || arch == "arm64") {
         prefix = "arm64"
     } else if (arch == "x86_64") {
         prefix = "amd64"
