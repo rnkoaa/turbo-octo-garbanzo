@@ -3,10 +3,8 @@ package com.excalibur
 import com.excalibur.functest.ProductClient
 import com.excalibur.product.Product
 import com.excalibur.product.ProductVariant
-import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import spock.lang.Shared
 
-@MicronautTest(environments = ["test"], packages = ["com.excalibur.functest"])
 class ProductSpecification extends ApplicationContextSpecification {
 
     @Shared
@@ -20,6 +18,51 @@ class ProductSpecification extends ApplicationContextSpecification {
 
     def cleanup() {
         productClient.resetProducts().block()
+    }
+
+    def "retrieve all products"() {
+
+        when:
+        List<Product> products = productClient.getProducts().block()
+
+        then:
+        products.size() == 6
+    }
+
+    def "retrieve one product that exists"() {
+
+        when:
+        List<Product> products = productClient.getProducts().block()
+
+        then:
+        products.size() == 6
+
+        when:
+        Product product = products[0]
+        Product foundProduct = productClient.getProduct(product.id()).block()
+
+        then:
+        foundProduct != null
+        product == foundProduct
+    }
+
+    def "deleting existing products work"() {
+
+        when:
+        List<Product> products = productClient.getProducts().block()
+
+        then:
+        products.size() == 6
+
+        when:
+        Product product = products[0]
+        productClient.deleteProduct(product.id()).block()
+        List<Product> newProducts = productClient.getProducts().block()
+
+        then:
+        noExceptionThrown()
+        newProducts.size() == 5
+
     }
 
     def "can create new product"() {
@@ -38,15 +81,5 @@ class ProductSpecification extends ApplicationContextSpecification {
 
         then:
         products.size() == 7
-
-    }
-
-
-    def "check health of client"() {
-        when:
-        List<Product> res = productClient.getProducts().block()
-
-        then:
-        res.size() == 6
     }
 }

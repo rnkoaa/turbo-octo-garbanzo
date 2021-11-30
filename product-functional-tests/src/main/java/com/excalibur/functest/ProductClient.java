@@ -3,8 +3,10 @@ package com.excalibur.functest;
 import com.excalibur.product.Product;
 import com.excalibur.product.ProductApi;
 import io.micronaut.http.HttpResponse;
+
 import java.util.List;
 import java.util.UUID;
+
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import reactor.core.publisher.Mono;
@@ -26,9 +28,13 @@ public interface ProductClient {
     @PUT("/product/{id}")
     Mono<Product> updateProduct(@Path("id") UUID id, @Body Product product);
 
+    @GET("/product/{id}")
+    Mono<Product> getProduct(@Path("id") UUID id);
+
+    @DELETE("/product/{id}")
+    Mono<Void> deleteProduct(@Path("id") UUID id);
+
     @DELETE("/product")
     Mono<Void> resetProducts();
 
-    @GET("/product/{id}")
-    Mono<Product> getProduct(@Path("id") UUID id);
 }
