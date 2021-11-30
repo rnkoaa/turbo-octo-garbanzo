@@ -49,4 +49,8 @@ public class Products {
         products.clear();
         addSampleProducts();
     }
+
+    public void delete(UUID id) {
+        products.remove(id);
+    }
 }

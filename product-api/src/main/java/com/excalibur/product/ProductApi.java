@@ -67,4 +67,13 @@ public interface ProductApi {
     @Tag(name = "product")
     Mono<Product> getProduct(UUID id);
 
+    @Delete("/{id}")
+    @Operation(summary = "delete single product",
+        description = "delete single product"
+    )
+    @ApiResponse(responseCode = "400", description = "invalid product request")
+    @ApiResponse(responseCode = "204", description = "product successfully deleted")
+    @ApiResponse(responseCode = "404", description = "product not found")
+    @Tag(name = "product")
+    Mono<HttpResponse<?>> deleteProduct(UUID id);
 }

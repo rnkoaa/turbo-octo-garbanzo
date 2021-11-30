@@ -5,6 +5,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 import com.excalibur.product.Product;
 import com.excalibur.product.ProductVariant;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Mono;
 
 @MicronautTest
 class ProductIntegrationTest {
@@ -70,6 +72,17 @@ class ProductIntegrationTest {
         Product retrievedProduct = productIntegrationClient.getProduct(product.id()).block();
         assertThat(retrievedProduct).isNotNull();
         assertThat(retrievedProduct).isEqualTo(product);
+    }
+
+    @Test
+    void singleProductCanBeDeleted() {
+        List<Product> products = productIntegrationClient.getProducts().block();
+        assertThat(products).hasSize(6);
+        assertThat(products).isNotNull();
+        var product = products.get(0);
+        HttpResponse<?> deletedRes = productIntegrationClient.deleteProduct(product.id()).block();
+        assertThat(deletedRes).isNotNull();
+        assertThat(deletedRes.getStatus().getCode()).isEqualTo(204);
     }
 
 }

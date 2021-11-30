@@ -50,6 +50,12 @@ public class ProductController implements ProductApi {
         return Mono.just(products.get(id));
     }
 
+    @Override
+    public Mono<HttpResponse<?>> deleteProduct(UUID id) {
+        products.delete(id);
+        return Mono.just(HttpResponse.noContent());
+    }
+
     protected URI location(UUID id) {
         return URI.create("/product/" + id.toString());
     }

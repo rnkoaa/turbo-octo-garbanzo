@@ -3,6 +3,7 @@ package com.excalibur
 import com.excalibur.functest.ProductClient
 import com.excalibur.product.Product
 import com.excalibur.product.ProductVariant
+import retrofit2.HttpException
 import spock.lang.Shared
 
 class ProductSpecification extends ApplicationContextSpecification {
@@ -46,6 +47,15 @@ class ProductSpecification extends ApplicationContextSpecification {
         product == foundProduct
     }
 
+    def "retrieve one product that does not exist causes exception"() {
+
+        when:
+        productClient.getProduct(UUID.randomUUID()).blockOptional()
+
+        then:
+        thrown(HttpException)
+    }
+
     def "deleting existing products work"() {
 
         when:
@@ -81,5 +91,32 @@ class ProductSpecification extends ApplicationContextSpecification {
 
         then:
         products.size() == 7
+    }
+
+    def "can update existing product"() {
+        given:
+        String newProductName = "DDD Distilled version 1"
+
+        when:
+        List<Product> products = productClient.getProducts().block()
+
+        then:
+        products.size() == 6
+
+        when:
+        Product intriguingProduct = products[0]
+        Product productToUpdate = intriguingProduct.withName(newProductName)
+        productClient.updateProduct(intriguingProduct.id(), productToUpdate).block()
+
+        Product updatedProduct = productClient.getProduct(intriguingProduct.id()).block()
+
+        then:
+        updatedProduct.name() == newProductName
+
+        when:
+        List<Product> mProducts = productClient.getProducts().block()
+
+        then:
+        mProducts.size() == 6
     }
 }
